@@ -35,7 +35,7 @@ print_chart = ticker_counts[ticker_counts > 1]
 
 ################################################################
 ################################################################
-# Print basic statistical data of the data set #################
+####### Print basic statistical data of the data set ###########
 #print ('Mean: ', np.mean(print_chart))
 #print ("Median: ", np.median(print_chart))
 #print ("Mode: ", stats.mode(print_chart))
@@ -45,18 +45,41 @@ print_chart = ticker_counts[ticker_counts > 1]
 
 # End basic statistical output section ########################
 ###############################################################
-# BEGIN advanced statistical data #############################
+####### BEGIN advanced statistical data #######################
 
-#print(np.corrcoef(df['Rank'], pct_chg))
+#print(np.corrcoef([df['Rank'],df['Price'],df['Change'], df['% Change'], df['Volume']]))
+
+#   Linear Regression
+slope, intercept, r_value, p_value, std_err = stats.linregress(df['Price'], df['Change'])
+
+#   Polynomial Regression
+p4 = np.poly1d(np.polyfit(df['Rank'], df['% Change'],15))
+
+#print (r_value ** 2)
 
 # END advanced statistical data ###############################
 ################################################################
 # Chart output section #########################################
 
-# plot histogram up to th defined max 
-plt.hist(print_chart,100,range=(2,ticker_counts.max()))
+# plot histogram
+#plt.hist(print_chart,100,range=(2,ticker_counts.max()))
 #plt.hist(print_chart,100)
-#plt.scatter(df['Rank'], pct_chg)
+
+# LINEAR REGRESSION - define function based on  outputs above 
+#def predict(x):
+#    return slope * x + intercept 
+
+#fitline = predict(df['Price'])
+
+#   plot scatter
+plt.scatter(df['Rank'],df['% Change'])
+
+#   plot linear regression
+#plt.plot(df['Price'], fitline, c='g')
+
+#   plot polynomial regression
+xp = np.linspace(0,100,100)
+plt.plot(xp,p4(xp), c='r')
 
 # PRINT CHART TO FILE 
 # plt.savefig('c:\\workbench\\Python-test\\MyPlot.png', format='png')
