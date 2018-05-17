@@ -35,7 +35,7 @@ print_chart = ticker_counts[ticker_counts > 1]
 
 ################################################################
 ################################################################
-####### Print basic statistical data of the data set ###########
+####### BEGIN basic statistical data ###########################
 #print ('Mean: ', np.mean(print_chart))
 #print ("Median: ", np.median(print_chart))
 #print ("Mode: ", stats.mode(print_chart))
