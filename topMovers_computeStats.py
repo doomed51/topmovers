@@ -1,9 +1,12 @@
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 
+import matplotlib.pyplot as plt
 from scipy import stats
+
 from sklearn.metrics import r2_score
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import scale
 
 topMoversData = pd.read_csv("topMovers.csv", skipinitialspace = True)
 
@@ -37,6 +40,21 @@ def plotRankAndPctChange():
     r2 = r2_score(topMoversData_test['% Change'], rankPctChangePolynomial(topMoversData_test['Rank']))
 
     print(r2)
+
+def  clusterPctChange():
+    pctChangeKModel = KMeans(n_clusters=3)
+    
+    pctChangeArray = np.array(topMoversData_train[['Rank','% Change']])
+
+    #print(pctChangeArray[0:10])
+    pctChangeKModel = pctChangeKModel.fit(scale(pctChangeArray))
+    
+    print(pctChangeKModel.labels_)
+
+    plt.figure(figsize=(8,6))
+    plt.scatter(pctChangeArray[:,0], pctChangeArray[:,1], c=pctChangeKModel.labels_.astype(float))
+    
+
 # INCOMPLETE
 # run linear reg on ticker counts and display chart results
 def tickerCountLinReg():
@@ -117,7 +135,8 @@ print(topMoversData_train.columns)
 # PRINT CHART TO FILE
 # plt.savefig('c:\\workbench\\Python-test\\MyPlot.png', format='png')
 
-plotRankAndPctChange()
+#plotRankAndPctChange()
+clusterPctChange()
 
 # DRAW the chart on screen
 plt.show()
