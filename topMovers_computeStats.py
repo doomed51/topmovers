@@ -10,6 +10,9 @@ from sklearn.metrics import r2_score
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import scale
 
+# Basic URL Imports
+import urllib
+
 topMoversData = pd.read_csv("topMovers.csv", skipinitialspace = True)
 
 # cleanse the columns of any extra initial or trailing spaces
@@ -23,6 +26,15 @@ topMoversData_train = topMoversData#[:int(len(topMoversData)*.8)]
 
 #Define test data as the last 80% of the dataset 
 topMoversData_test = topMoversData[int(len(topMoversData)*.8):]
+
+def testAPI(myURL):
+    #request = urllib.request.Request(myURL)
+
+    #myResponse = urllib.request.urlopen(request)
+    #return myResponse.read()
+    apiResponseDataframe = pd.read_json(myURL, typ='series')
+    return apiResponseDataframe
+
 
 def tickerReturnSinceFirst():
     tickerCounts = topMoversData_train.groupby('Symbol').filter(lambda x: x['Symbol'].count() > 1)
@@ -85,7 +97,9 @@ def writeDataframeToExcel(myDF, myFileName, mySheetName):
     myDF.to_excel(writer, sheet_name=mySheetName)
     writer.save()
 
-writeDataframeToExcel(tickerReturnSinceFirst(), 'tickerStats.xlsx', 'Ticker Days')
+testAPIResult = testAPI("https://api.iextrading.com/1.0/stock/aapl/delayed-quote")
+print(testAPIResult)
+#writeDataframeToExcel(tickerReturnSinceFirst(), 'tickerStats.xlsx', 'Ticker Days')
 #plotRankAndPctChange()
 #clusterPctChange()
 
