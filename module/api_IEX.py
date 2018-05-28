@@ -19,13 +19,32 @@ class api_IEX:
     
     """returns the close price of a ticker on the target date """
     def getClosePriceOnDate(self, tgtDate):
-        apiPath = self.baseURL + "/chart/5y"
-        
-        #ping the api
-        chartResponse = pd.read_json(apiPath)
-        
         #filter the dataframe by the target date
-        chartResponse = chartResponse.loc[chartResponse['date'] == tgtDate]#(datetime.datetime.now() - datetime.timedelta(1)).date()]
+        chartResponse = self._getChartDataForTicker(tgtDate) #chartResponse.loc[chartResponse['date'] == tgtDate]#(datetime.datetime.now() - datetime.timedelta(1)).date()]
+
+        if chartResponse.empty == False :
+            #set the response to the close price 
+            self.dfResponse = chartResponse['close']
+
+    """ Private function that returns Chart Data for the specified target date """
+    def _getChartDataForTicker(self, tgtDate):
         
-        #set the response to the close price 
-        self.dfResponse = chartResponse['close']
+        #initialize empty dataframe
+        chartResponse = pd.DataFrame()
+
+        #set api path for the appropriate date
+        apiPath = self.baseURL + "/chart/5y"        
+        
+        #skip weekends 
+        if tgtDate.weekday() < 5:
+            #ping the api
+            chartResponse = pd.read_json(apiPath)
+            #return chart dataframe for the target date
+            return chartResponse.loc[chartResponse['date'] == tgtDate]
+        else:
+            print('Date Skipped!') 
+            print(tgtDate)
+            #return empty dataframe response 
+            return chartResponse
+
+        

@@ -92,7 +92,7 @@ def writeDataframeToExcel(myDF, myFileName, mySheetName):
     writer.save()
 
 iexAPI = api_IEX("AAPL")
-iexAPI.getPriceOnDate(datetime.datetime.now().date())
+iexAPI.getClosePriceOnDate(datetime.datetime.now().date() - datetime.timedelta(1))
 print(iexAPI.dfResponse)
 #writeDataframeToExcel(tickerReturnSinceFirst(), 'tickerStats.xlsx', 'Ticker Days')
 #plotRankAndPctChange()
