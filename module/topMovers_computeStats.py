@@ -15,17 +15,20 @@ from sklearn.preprocessing import scale
 
 #API Interfaces
 from api_IEX import api_IEX
+from api_Excel import api_Excel
 
-topMoversData = pd.read_csv("../topMovers.csv", skipinitialspace = True)
+# Read in dailymovers data from excel 
+excelAPI = api_Excel("topMovers_20180702.xlsm", "C:/Workbench/topMovers")
+topMoversData = excelAPI.readExcelSheet("dailyMovers_Data")
 
 # cleanse the columns of any extra initial or trailing spaces
 topMoversData.columns = topMoversData.columns.str.strip()
 
 #normalize dates
-topMoversData['Date'] = topMoversData['Date'].apply(dateutil.parser.parse, dayfirst=False)
+#topMoversData['Date'] = topMoversData['Date'].apply(dateutil.parser.parse, dayfirst=False)
 
 # Define train data as the first 80% of the dataset 
-topMoversData_train = topMoversData#[:int(len(topMoversData)*.8)]
+topMoversData_train = topMoversData[:int(len(topMoversData)*.8)]
 
 #Define test data as the last 80% of the dataset 
 topMoversData_test = topMoversData[int(len(topMoversData)*.8):]
@@ -34,7 +37,7 @@ def tickerReturnSinceFirst():
     # create a dataframe consisting of ticker data for tickers in more than 1 day 
     tickerCounts = topMoversData_train.groupby('Symbol').filter(lambda x: x['Symbol'].count() > 1)
     
-    #define the aggregator for the group by function below 
+    #define the aggregator for the groupBy function below 
     aggregators = {
         '% Change' : {
             'avgPctChange' : 'mean',
@@ -91,10 +94,10 @@ def writeDataframeToExcel(myDF, myFileName, mySheetName):
     myDF.to_excel(writer, sheet_name=mySheetName)
     writer.save()
 
-iexAPI = api_IEX("AAPL")
-iexAPI.getClosePriceOnDate(datetime.datetime.now().date() - datetime.timedelta(1))
-print(iexAPI.dfResponse)
-#writeDataframeToExcel(tickerReturnSinceFirst(), 'tickerStats.xlsx', 'Ticker Days')
+#iexAPI = api_IEX("AAPL")
+#iexAPI.getClosePriceOnDate(datetime.datetime.now().date() - datetime.timedelta(1))
+#print(iexAPI.dfResponse)
+
 #plotRankAndPctChange()
 #clusterPctChange()
 
