@@ -21,10 +21,14 @@ from api_Excel import api_Excel
 excelAPI = api_Excel("topMovers_20180702.xlsm", "C:/Workbench/topMovers")
 topMoversData = excelAPI.readExcelSheet("dailyMovers_Data")
 
+#iexAPI = api_IEX("AAPL")
+#iexAPI.getClosePriceOnDate(datetime.datetime.now().date() - datetime.timedelta(1))
+#print(iexAPI.dfResponse)
+
 # cleanse the columns of any extra initial or trailing spaces
 topMoversData.columns = topMoversData.columns.str.strip()
 
-#normalize dates
+#normalize dates - deprecated as now reading excel directly with api class 
 #topMoversData['Date'] = topMoversData['Date'].apply(dateutil.parser.parse, dayfirst=False)
 
 # Define train data as the first 80% of the dataset 
@@ -93,10 +97,6 @@ def writeDataframeToExcel(myDF, myFileName, mySheetName):
     writer = pd.ExcelWriter(myFileName, engine='xlsxwriter')
     myDF.to_excel(writer, sheet_name=mySheetName)
     writer.save()
-
-#iexAPI = api_IEX("AAPL")
-#iexAPI.getClosePriceOnDate(datetime.datetime.now().date() - datetime.timedelta(1))
-#print(iexAPI.dfResponse)
 
 #plotRankAndPctChange()
 #clusterPctChange()
